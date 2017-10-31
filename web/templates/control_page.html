@@ -1,0 +1,139 @@
+{% block metas %}
+<meta charset="UTF-8">
+{% endblock %}
+
+{% block title%}
+    <title>Leader Light-LightControl </title>
+{% endblock %}
+
+{% block header %}
+
+<div class="container">
+  <div class="jumbotron">
+    <h1>Light Control</h1>
+    <p></p>
+  </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" type= "text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css')}}">
+<link rel="stylesheet" type= "text/css" href="{{ url_for('static', filename='css/index2_related.css')}}">
+{% endblock %}
+
+{% block scripts %}
+<script src="../static/jquery-3.2.1.min.js"></script>
+<script src="../static/socket.io.min.js"></script>
+<script src="../static/bootstrap/js/bootstrap.min.js"></script>
+{% endblock %}
+
+
+{% block body %}
+
+    </div>
+<div class="container-fluid ">
+<div class="row" id="button-container">
+    <div class="col-md-6">
+        <button class="btn btn-primary btn-lg btn-block" id="btn_on">On</button>
+    </div>
+    <div class="col-md-6" >
+        <button class="btn-primary btn-lg btn-block " id="btn_off">Off</button>
+    </div>
+</div>
+
+
+{#  </div>#}
+{% endblock %}
+
+{% block scipts %}
+
+{#  //////////////////////////////////BUTTON SCRPIT ////////////////////////////////#}
+<script type="text/javascript" charset="utf-8">
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    socket.on('connect', function() {
+        {#  alert("socket connected")#}
+    });
+</script>
+
+
+
+    <script  type="text/javascript">
+            var btn_on = document.getElementById("btn_on");        // Create a <button> element
+            btn_on.style.fontSize="250%";
+            btn_on.onclick= function () {
+                var dimming_level=254;
+                socket.emit('Relay_action',{"relay_state": 1});
+                socket.emit('PWM_action',{"dimming_level": 255});
+            };
+
+            var btn_off = document.getElementById("btn_off");        // Create a <button> element
+            btn_off.style.fontSize="250%";
+            btn_off.onclick= function () {
+                socket.emit('Relay_action',{"relay_state": 0});
+                socket.emit('PWM_action',{"dimming_level": 0});
+            };
+    </script>
+
+
+<div class=" container-fluid" id="pwm_buttons">
+    {#create the 6 extra buttons with id's button1,button2 etc. #}
+    <script  type="text/javascript">
+        var div_pwm_buttons=document.getElementById("pwm_buttons")
+        var number_of_buttons=6;
+        button_1 ={"dimming_level":210, "name":"Breaks"};
+        button_2 ={"dimming_level":220, "name":"Additional Training"};
+        button_3 ={"dimming_level":230, "name":"Official game"};
+        button_4 ={"dimming_level":240, "name":"Training 2"};
+        button_5 ={"dimming_level":240, "name":"Training 1"};
+        button_6 ={"dimming_level":254, "name":"Cleaning"};
+
+        for(i=1; i<=number_of_buttons; i++ ){
+
+            var btn = document.createElement("button");        // Create a <button> element
+            ///btn.setAttribute("id", "button_"+i, "border-radius", 2px);
+            btn.setAttribute("id", "button_"+i);
+            btn.classList.add("btn-secondary", "btn-lg", "btn-block","h-25","d-inline-block");
+	        btn.style.fontSize="250%";
+            btn.setAttribute("number", i);
+            btn.onclick= function () {
+                var button_number=this.getAttribute("number");
+
+                if (button_number==1){var dimming_level=button_1["dimming_level"];}
+                if (button_number==2){var dimming_level=button_2["dimming_level"];}
+                if (button_number==3){var dimming_level=button_3["dimming_level"];}
+                if (button_number==4){var dimming_level=button_4["dimming_level"];}
+                if (button_number==5){var dimming_level=button_5["dimming_level"];}
+                if (button_number==6){var dimming_level=button_6["dimming_level"];}
+                socket.emit('PWM_action',{"dimming_level": dimming_level});
+            };
+             if(i==1){var t = document.createTextNode(button_1["name"]);}
+            if(i==2){var t = document.createTextNode(button_2["name"]);}
+            if(i==3){var t = document.createTextNode(button_3["name"]);}
+            if(i==4){var t = document.createTextNode(button_4["name"]);}
+            if(i==5){var t = document.createTextNode(button_5["name"]);}
+            if(i==6){var t = document.createTextNode(button_6["name"]);}
+
+
+            btn.appendChild(t);                                // Append the text to <button>
+            div_pwm_buttons.appendChild(btn);// Append <button> to <body>
+
+
+        }
+
+
+    </script>
+</div>
+
+
+    {#//////////////////////////////////BUTTON SCRPIT END ////////////////////////////////    #}
+
+</div>
+
+
+{#<div class="container-fluid"><footer><img src="../static/images/leader-light.jpg"></footer>"</div>#}
+
+{% endblock %}
+
+
+
+
